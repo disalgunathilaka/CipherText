@@ -1,17 +1,16 @@
 import 'react-native-gesture-handler';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {HomeScreen} from './screens';
+import ChatList from './screens';
 import {LoginScreen} from './screens/login';
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
-import ApplicationNavigationBar from './components/app-bar';
 import Toast from 'react-native-toast-message';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {ChildDeatils} from './screens/child-details';
+import ChatScreen from './screens/conversation-list';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,11 +34,11 @@ function App(): JSX.Element {
           <Stack.Navigator
             initialRouteName="Login"
             screenOptions={{
-              header: props => <ApplicationNavigationBar {...props} />,
+              header: () => <></>,
             }}>
             <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Details" component={ChildDeatils} />
+            <Stack.Screen name="Home" component={ChatList} />
+            <Stack.Screen name="ChatScreen" component={ChatScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </QueryClientProvider>

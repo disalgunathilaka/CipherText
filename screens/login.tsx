@@ -1,8 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {Card, Button, Text, TextInput} from 'react-native-paper';
+import {Button, Text, TextInput} from 'react-native-paper';
 import {useSignInMutation} from '../hooks/auth/use-sign-in';
-import {ToastAndroid} from 'react-native';
+import {StyleSheet, ToastAndroid, View} from 'react-native';
 
 export function LoginScreen({navigation}: any) {
   const [email, setEmail] = React.useState('');
@@ -10,51 +10,81 @@ export function LoginScreen({navigation}: any) {
   const signInMutation = useSignInMutation();
 
   const signIn = async () => {
-    const result = await signInMutation.mutateAsync({email, password});
+    try {
+      navigation.navigate('Home', {
+        userId: '1234',
+      });
 
-    if (result.user.role !== 'parent') {
-      ToastAndroid.show('only parents can use this app', ToastAndroid.SHORT);
-      return;
+      const result = await signInMutation.mutateAsync({email, password});
+
+      if (!result) {
+        ToastAndroid.show('Unauthozied', ToastAndroid.SHORT);
+        return;
+      }
+      navigation.navigate('Home', {
+        userId: result.user.id,
+      });
+    } catch (err) {
+      console.log(err);
     }
-    navigation.navigate('Home', {
-      userId: result.user.id,
-    });
   };
 
   return (
-    <Card style={{margin: 20}}>
-      <Card.Content>
-        <Text variant="headlineSmall" style={{fontWeight: 'bold'}}>
-          Welcome Back
-        </Text>
-
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome Back!</Text>
+      <View style={styles.form}>
         <TextInput
           label="Email"
           value={email}
+          onChangeText={setEmail}
           mode="outlined"
-          style={{marginTop: 10}}
-          onChangeText={text => setEmail(text)}
+          style={styles.input}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          textContentType="emailAddress"
         />
-
         <TextInput
           label="Password"
           value={password}
-          style={{
-            marginTop: 10,
-          }}
+          onChangeText={setPassword}
           mode="outlined"
-          onChangeText={text => setPassword(text)}
+          style={styles.input}
+          secureTextEntry
+          autoCapitalize="none"
+          textContentType="password"
         />
-      </Card.Content>
-
-      <Card.Actions style={{marginTop: 10}}>
-        <Button
-          mode="contained-tonal"
-          onPress={signIn}
-          loading={signInMutation.isLoading}>
-          Sign-In
+        <Button mode="contained" onPress={signIn} style={styles.button}>
+          Log In
         </Button>
-      </Card.Actions>
-    </Card>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  form: {
+    width: '80%',
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    marginBottom: 16,
+  },
+  button: {
+    width: '100%',
+    borderRadius: 5,
+    marginTop: 16,
+    backgroundColor: '#6200ee',
+  },
+});

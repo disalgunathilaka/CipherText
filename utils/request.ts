@@ -1,9 +1,6 @@
 import {AxiosResponse} from 'axios';
 import httpClient from './axios';
 import {AppConfig} from '../config';
-import Toast from 'react-native-toast-message';
-import {isArray} from 'lodash';
-import {ToastAndroid} from 'react-native';
 
 export class ResponseError extends Error {
   public response: Response;
@@ -27,7 +24,7 @@ const parseJSON = async (response: AxiosResponse) => {
 export async function request(
   _metadata: any,
   data: any,
-  isSecure = true,
+  _isSecure = true,
   isFormData = false,
   url: string = AppConfig.backend,
 ): Promise<any> {
@@ -69,15 +66,8 @@ export async function request(
     .catch((error: {response: {data: any}}) => {
       const data = error.response?.data;
       const apiMessage = data.message ?? 'Something went wrong';
-      console.log(apiMessage);
 
-      if (isArray(apiMessage)) {
-        apiMessage.map(message => {
-          ToastAndroid.show(message, ToastAndroid.SHORT);
-        });
-      } else {
-        ToastAndroid.show(data.messag, ToastAndroid.SHORT);
-      }
+      console.log(apiMessage);
     });
 
   return parseJSON(response!);
