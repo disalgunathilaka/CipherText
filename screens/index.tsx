@@ -174,7 +174,7 @@ const ChatList = ({navigation}: any) => {
                             size={40}
                             key={chat._id}
                             source={{
-                              uri: `https://robohash.org/${chat.users[0].userId._id}`,
+                              uri: `https://robohash.org/${chat._id}`,
                             }}
                           />
                         </>

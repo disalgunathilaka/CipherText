@@ -17,7 +17,9 @@ import Geolocation from '@react-native-community/geolocation';
 import {useGetCurrentUser} from '../hooks/auth/get-current-user';
 
 const ChatScreen = ({route, navigation}: any) => {
-  const {_id, name, keyPair} = route.params as IChat;
+  const {_id, name, keyPair, updatedAt, ...rest} = route.params as IChat;
+  console.log(JSON.stringify(rest));
+  console.log(updatedAt);
   const [inputValue, setInputValue] = useState('');
   const messageList = useMessages(_id);
   const sendMessageMutation = useSendMessage();
@@ -56,13 +58,22 @@ const ChatScreen = ({route, navigation}: any) => {
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Avatar.Text size={40} label={name[0]} />
+        <Avatar.Image
+          size={40}
+          key={_id}
+          source={{
+            uri: `https://robohash.org/${_id}`,
+          }}
+        />
         <Appbar.Content title={name} />
 
         <IconButton
           icon="information-outline"
           onPress={() => {
-            navigation.navigate('Settings');
+            navigation.navigate('ChatInfo', {
+              _id,
+              name,
+            });
           }}
         />
       </Appbar.Header>
