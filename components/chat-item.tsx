@@ -4,7 +4,7 @@ import {IMessage} from '../types/messages';
 import {StyleSheet} from 'react-native';
 import {KeyPair} from '../types/chat';
 import {decrypt} from '../utils/crypto';
-import {timeAgo} from '../utils/days-ago';
+import {timeSince} from '../utils/days-ago';
 
 interface IChatItemProps {
   message: IMessage;
@@ -16,11 +16,7 @@ export const ChatItem = ({message, keyPair}: IChatItemProps) => {
     <List.Item
       key={message._id}
       title={decrypt(message.text, keyPair.privateKey)}
-      description={
-        <Caption>
-          {timeAgo(Math.floor(new Date(message.createdAt).getTime() / 1000))}
-        </Caption>
-      }
+      description={<Caption>{timeSince(new Date(message.createdAt))}</Caption>}
       titleStyle={[
         styles.message,
         message.sendBy === 'user' ? styles.sentMessage : styles.receivedMessage,

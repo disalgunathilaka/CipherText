@@ -1,19 +1,32 @@
-export function timeAgo(timestamp: number): string {
-  const now = new Date().getTime() / 1000; // Convert to Unix time
-  const secondsAgo = Math.floor(now - timestamp);
+export function timeSince(date: Date): string {
+  const seconds: number = Math.floor(
+    (new Date().getTime() - date.getTime()) / 1000,
+  );
 
-  if (secondsAgo < 60) {
-    return secondsAgo + ' seconds ago';
-  } else if (secondsAgo < 3600) {
-    const minutesAgo = Math.floor(secondsAgo / 60);
-    return minutesAgo + ' minutes ago';
-  } else if (secondsAgo < 86400) {
-    const hoursAgo = Math.floor(secondsAgo / 3600);
-    return hoursAgo + ' hours ago';
-  } else {
-    const daysAgo = Math.floor(secondsAgo / 86400);
-    return daysAgo + ' days ago';
+  if (seconds < 0) {
+    return 'Just now';
   }
-}
 
-// Math.floor(new Date(message.createdAt).getTime() / 1000);
+  let interval: number = Math.floor(seconds / 31536000);
+
+  if (interval >= 1) {
+    return interval + ' year' + (interval === 1 ? '' : 's') + ' ago';
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) {
+    return interval + ' month' + (interval === 1 ? '' : 's') + ' ago';
+  }
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) {
+    return interval + ' day' + (interval === 1 ? '' : 's') + ' ago';
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) {
+    return interval + ' hour' + (interval === 1 ? '' : 's') + ' ago';
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) {
+    return interval + ' minute' + (interval === 1 ? '' : 's') + ' ago';
+  }
+  return Math.floor(seconds) + ' second' + (seconds === 1 ? '' : 's') + ' ago';
+}
