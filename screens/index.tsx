@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
-import {View} from 'react-native';
+import {Dimensions, View} from 'react-native';
 import {useUserChildrens} from '../hooks/users/use-children';
 import {
   ActivityIndicator,
@@ -10,6 +10,7 @@ import {
   List,
 } from 'react-native-paper';
 import {UserChildren} from '../types/user-children';
+import {LineChart} from 'react-native-chart-kit';
 
 export function HomeScreen({route, navigation}: any) {
   const {userId} = route.params as {userId: string};
@@ -41,6 +42,7 @@ export function HomeScreen({route, navigation}: any) {
                   }
                   left={_props => (
                     <Avatar.Text
+                      key={child._id}
                       size={40}
                       label={`${child.firstName.charAt(
                         0,
