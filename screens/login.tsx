@@ -50,7 +50,11 @@ export function LoginScreen({navigation}: any) {
           autoCapitalize="none"
           textContentType="password"
         />
-        <Button mode="contained" onPress={signIn} style={styles.button}>
+        <Button
+          mode="contained"
+          onPress={signIn}
+          style={styles.button}
+          loading={signInMutation.isLoading}>
           Log In
         </Button>
       </View>

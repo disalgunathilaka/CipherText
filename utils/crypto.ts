@@ -8,8 +8,12 @@ export const encrypt = (input: string, publicKey: string) => {
 
 // Decrypt the encrypted input using the private key
 export const decrypt = (encryptedInput: string, privateKey: string) => {
-  const privateKeyObj = forge.pki.privateKeyFromPem(privateKey);
-  const encrypted = forge.util.decode64(encryptedInput);
-  const decrypted = privateKeyObj.decrypt(encrypted);
-  return decrypted;
+  try {
+    const privateKeyObj = forge.pki.privateKeyFromPem(privateKey);
+    const encrypted = forge.util.decode64(encryptedInput);
+    const decrypted = privateKeyObj.decrypt(encrypted);
+    return decrypted;
+  } catch (err) {
+    return 'enable to decrypt ';
+  }
 };
