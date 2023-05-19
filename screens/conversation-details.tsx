@@ -14,12 +14,14 @@ import {ChatItem} from '../components/chat-item';
 import {useSendMessage} from '../hooks/messages/send-messages';
 import {encrypt} from '../utils/crypto';
 import Geolocation from '@react-native-community/geolocation';
+import {useGetCurrentUser} from '../hooks/auth/get-current-user';
 
 const ChatScreen = ({route, navigation}: any) => {
   const {_id, name, keyPair} = route.params as IChat;
   const [inputValue, setInputValue] = useState('');
   const messageList = useMessages(_id);
   const sendMessageMutation = useSendMessage();
+  const user = useGetCurrentUser();
 
   const handleSendMessage = async () => {
     // Get the user's current location
@@ -56,16 +58,38 @@ const ChatScreen = ({route, navigation}: any) => {
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Avatar.Text size={40} label={name[0]} />
         <Appbar.Content title={name} />
+
+        <IconButton
+          icon="information-outline"
+          onPress={() => {
+            navigation.navigate('Settings');
+          }}
+        />
       </Appbar.Header>
+
       <List.Section style={styles.messageList}>
-        {messageList.data && (
+        {!user.data ? (
+          <Button loading={true} mode="text">
+            Loading
+          </Button>
+        ) : (
           <>
-            {messageList.data.map(message => (
-              <ChatItem message={message} key={message._id} keyPair={keyPair} />
-            ))}
+            {messageList.data && (
+              <>
+                {messageList.data.map(message => (
+                  <ChatItem
+                    user={user.data}
+                    message={message}
+                    key={message._id}
+                    keyPair={keyPair}
+                  />
+                ))}
+              </>
+            )}
           </>
         )}
       </List.Section>
+
       <View style={styles.inputContainer}>
         <Searchbar
           style={styles.input}

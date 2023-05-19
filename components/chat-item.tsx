@@ -9,9 +9,15 @@ import {timeSince} from '../utils/days-ago';
 interface IChatItemProps {
   message: IMessage;
   keyPair: KeyPair;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
 }
 
-export const ChatItem = ({message, keyPair}: IChatItemProps) => {
+export const ChatItem = ({message, keyPair, user}: IChatItemProps) => {
   return (
     <List.Item
       key={message._id}
@@ -19,7 +25,9 @@ export const ChatItem = ({message, keyPair}: IChatItemProps) => {
       description={<Caption>{timeSince(new Date(message.createdAt))}</Caption>}
       titleStyle={[
         styles.message,
-        message.sendBy === 'user' ? styles.sentMessage : styles.receivedMessage,
+        message.sendBy === user.id
+          ? styles.sentMessage
+          : styles.receivedMessage,
       ]}
     />
   );
