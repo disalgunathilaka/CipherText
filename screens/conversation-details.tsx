@@ -1,6 +1,13 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Appbar, Avatar, Button, List, TextInput} from 'react-native-paper';
+import {
+  Appbar,
+  Avatar,
+  Button,
+  IconButton,
+  List,
+  Searchbar,
+} from 'react-native-paper';
 import {IChat} from '../types/chat';
 import {useMessages} from '../hooks/messages/use-messages';
 import {ChatItem} from '../components/chat-item';
@@ -42,19 +49,28 @@ const ChatScreen = ({route, navigation}: any) => {
         )}
       </List.Section>
       <View style={styles.inputContainer}>
-        <TextInput
+        <Searchbar
           style={styles.input}
+          icon={'attachment'}
+          onIconPress={() => {
+            console.log('handle attachment upload');
+          }}
           placeholder="Type your message here"
-          value={inputValue}
           onChangeText={setInputValue}
-          mode="outlined"
+          value={inputValue}
         />
-        <Button
-          onPress={handleSendMessage}
-          mode="contained"
-          loading={sendMessageMutation.isLoading}>
-          Send{' '}
-        </Button>
+
+        {sendMessageMutation.isLoading ? (
+          <Button loading={true} mode="contained-tonal">
+            Sending
+          </Button>
+        ) : (
+          <IconButton
+            icon="send"
+            mode="contained-tonal"
+            onPress={handleSendMessage}
+          />
+        )}
       </View>
     </View>
   );

@@ -39,6 +39,7 @@ const ChatList = ({navigation}: any) => {
 
     setRefreshing(true);
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showModal = () => setVisible(true);
