@@ -4,50 +4,24 @@ import {Appbar, Avatar, Button, List, TextInput} from 'react-native-paper';
 import {IChat} from '../types/chat';
 import {useMessages} from '../hooks/messages/use-messages';
 import {ChatItem} from '../components/chat-item';
+import {useSendMessage} from '../hooks/messages/send-messages';
+import {encrypt} from '../utils/crypto';
 
 const ChatScreen = ({route, navigation}: any) => {
   const {_id, name, keyPair} = route.params as IChat;
   const [inputValue, setInputValue] = useState('');
   const messageList = useMessages(_id);
+  const sendMessageMutation = useSendMessage();
 
-  const [messages, setMessages] = useState([
-    {id: 1, content: 'Hey, how are you?', sender: 'user', time: '9:00 AM'},
-    {
-      id: 2,
-      content: "I'm good, thanks for asking!",
-      sender: 'other',
-      time: '9:01 AM',
-    },
-    {
-      id: 3,
-      content: 'What are you up to today?',
-      sender: 'other',
-      time: '9:02 AM',
-    },
-    {
-      id: 4,
-      content: 'Not much, just some work. How about you?',
-      sender: 'user',
-      time: '9:03 AM',
-    },
-    {
-      id: 5,
-      content: "I'm going to the beach with some friends!",
-      sender: 'other',
-      time: '9:04 AM',
-    },
-  ]);
-
-  const handleSendMessage = () => {
-    setMessages([
-      ...messages,
-      {
-        id: messages.length + 1,
-        content: inputValue,
-        sender: 'user',
-        time: new Date().toLocaleTimeString(),
-      },
-    ]);
+  const handleSendMessage = async () => {
+    const value = encrypt(inputValue, keyPair.publicKey);
+    await sendMessageMutation.mutateAsync({
+      text: value,
+      chatId: _id,
+      lat: 0,
+      lng: 0,
+    });
+    messageList.refetch();
     setInputValue('');
   };
 
@@ -73,8 +47,14 @@ const ChatScreen = ({route, navigation}: any) => {
           placeholder="Type your message here"
           value={inputValue}
           onChangeText={setInputValue}
+          mode="outlined"
         />
-        <Button onPress={handleSendMessage}>Send </Button>
+        <Button
+          onPress={handleSendMessage}
+          mode="contained"
+          loading={sendMessageMutation.isLoading}>
+          Send{' '}
+        </Button>
       </View>
     </View>
   );
