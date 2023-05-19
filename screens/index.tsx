@@ -15,6 +15,7 @@ import {
   Searchbar,
   Card,
   Button,
+  IconButton,
 } from 'react-native-paper';
 import {useChats} from '../hooks/converstations/use-chats';
 import {FAB, Icon} from 'react-native-elements';
@@ -145,6 +146,13 @@ const ChatList = ({navigation}: any) => {
           }>
           <View style={styles.conversations}>
             <Title style={styles.conversationsTitle}>Conversations</Title>
+
+            <IconButton
+              icon="account-settings"
+              onPress={() => {
+                navigation.navigate('Settings');
+              }}
+            />
           </View>
 
           <List.Section

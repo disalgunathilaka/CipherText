@@ -13,6 +13,7 @@ import {useMessages} from '../hooks/messages/use-messages';
 import {ChatItem} from '../components/chat-item';
 import {useSendMessage} from '../hooks/messages/send-messages';
 import {encrypt} from '../utils/crypto';
+import Geolocation from '@react-native-community/geolocation';
 
 const ChatScreen = ({route, navigation}: any) => {
   const {_id, name, keyPair} = route.params as IChat;
@@ -21,15 +22,32 @@ const ChatScreen = ({route, navigation}: any) => {
   const sendMessageMutation = useSendMessage();
 
   const handleSendMessage = async () => {
-    const value = encrypt(inputValue, keyPair.publicKey);
-    await sendMessageMutation.mutateAsync({
-      text: value,
-      chatId: _id,
-      lat: 0,
-      lng: 0,
-    });
-    messageList.refetch();
-    setInputValue('');
+    // Get the user's current location
+    Geolocation.getCurrentPosition(
+      async position => {
+        const {latitude, longitude} = position.coords;
+
+        // Encrypt the message using the public key
+        const value = encrypt(inputValue, keyPair.publicKey);
+
+        // Send the message with the current location
+        await sendMessageMutation.mutateAsync({
+          text: value,
+          chatId: _id,
+          lat: latitude,
+          lng: longitude,
+        });
+
+        // Refetch the message list and clear the input
+        messageList.refetch();
+        setInputValue('');
+      },
+      error => {
+        console.log(error);
+        // Handle error getting location
+      },
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+    );
   };
 
   return (
