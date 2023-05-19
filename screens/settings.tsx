@@ -27,25 +27,19 @@ export const SettingsScreen = ({navigation}: any) => {
         ) : (
           <>
             <View style={styles.profileHeader}>
-              <Avatar.Text
-                label={`${user.data.firstName[0]}${user.data.lastName[0]}`}
-                size={64}
-              />
-              <Text
-                style={
-                  styles.name
-                }>{`${user.data.firstName} ${user.data.lastName}`}</Text>
+              <Avatar.Text label={`DG`} size={64} />
+              <Text style={styles.name}>{`Disal Gunathilake`}</Text>
             </View>
             <View style={styles.form}>
               <TextInput
                 label="Email"
-                value={user.data.email}
+                value={'disal@localhost'}
                 disabled={true}
               />
               <View style={styles.spacer} />
               <Text style={styles.label}>Global Options</Text>
               <View style={styles.option}>
-                <Text style={styles.optionLabel}>Disable Screenshots</Text>
+                <Text style={styles.optionLabel}>Enable notifications</Text>
                 <Switch value={false} onValueChange={() => {}} />
               </View>
               {/* Add two more options here */}

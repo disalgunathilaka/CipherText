@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
   Appbar,
@@ -17,9 +17,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {useGetCurrentUser} from '../hooks/auth/get-current-user';
 
 const ChatScreen = ({route, navigation}: any) => {
-  const {_id, name, keyPair, updatedAt, ...rest} = route.params as IChat;
-  console.log(JSON.stringify(rest));
-  console.log(updatedAt);
+  const {_id, name, keyPair, dissabledScreenShots} = route.params as IChat;
   const [inputValue, setInputValue] = useState('');
   const messageList = useMessages(_id);
   const sendMessageMutation = useSendMessage();
@@ -54,6 +52,22 @@ const ChatScreen = ({route, navigation}: any) => {
     );
   };
 
+  useEffect(() => {
+    if (dissabledScreenShots) {
+      console.log('THIS CHAT HAS DISSABLED SCREENSHOTS');
+      //Alert.alert(
+      // 'Warning',
+      //'You have taken a screenshot of the app. This is prohibited due to security reasons.',
+      //[
+      // {
+      //  text: 'I understand',
+      //  onPress: () => console.log('I understand pressed'),
+      //},
+      //],
+      //);
+    }
+  }, [dissabledScreenShots]);
+
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
@@ -73,6 +87,7 @@ const ChatScreen = ({route, navigation}: any) => {
             navigation.navigate('ChatInfo', {
               _id,
               name,
+              dissabledScreenShots,
             });
           }}
         />

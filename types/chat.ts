@@ -5,6 +5,7 @@ export interface IChat {
   keyPair: KeyPair;
   createdAt: string;
   updatedAt: string;
+  dissabledScreenShots?: boolean;
   __v: number;
 }
 

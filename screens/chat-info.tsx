@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
   Appbar,
@@ -10,10 +10,25 @@ import {
 } from 'react-native-paper';
 import {useGetCurrentUser} from '../hooks/auth/get-current-user';
 import {IChat} from '../types/chat';
+import {useChatLocation} from '../hooks/converstations/use-location';
+import MapView, {Marker} from 'react-native-maps';
+import {useDisableChatScreenShotMutation} from '../hooks/converstations/use-screenshot-status';
 
 export const ChatInformationScreen = ({route, navigation}: any) => {
-  const {_id, name} = route.params as IChat;
+  const {_id, name, dissabledScreenShots} = route.params as IChat;
+  const [isDisabled, setIsDisabled] = useState(
+    dissabledScreenShots ? dissabledScreenShots : false,
+  );
+  const disableChatMutatin = useDisableChatScreenShotMutation(_id);
   const user = useGetCurrentUser();
+  const info = useChatLocation(_id);
+
+  const disableChatSS = async () => {
+    await disableChatMutatin.mutateAsync({
+      status: isDisabled,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
@@ -38,6 +53,35 @@ export const ChatInformationScreen = ({route, navigation}: any) => {
               />
               <Text style={styles.name}>{name}</Text>
             </View>
+            <View style={styles.mapView}>
+              {info.data && (
+                <>
+                  <MapView
+                    style={styles.map}
+                    initialRegion={{
+                      latitude: 0,
+                      longitude: 0,
+                      latitudeDelta: 0.1,
+                      longitudeDelta: 0.1,
+                    }}>
+                    {info.data.map(({userId, user, lastMessageLocation}) => (
+                      <Marker
+                        key={userId}
+                        coordinate={{
+                          latitude: lastMessageLocation.lat,
+                          longitude: lastMessageLocation.lng,
+                        }}>
+                        <Avatar.Image
+                          size={30}
+                          source={{uri: `https://robohash.org/${user.id}`}}
+                        />
+                      </Marker>
+                    ))}
+                  </MapView>
+                </>
+              )}
+            </View>
+
             <View style={styles.form}>
               <TextInput
                 label="Email"
@@ -48,13 +92,17 @@ export const ChatInformationScreen = ({route, navigation}: any) => {
               <Text style={styles.label}>Chat Options</Text>
               <View style={styles.option}>
                 <Text style={styles.optionLabel}>Disable Screenshots</Text>
-                <Switch value={false} onValueChange={() => {}} />
+                <Switch
+                  value={isDisabled}
+                  onValueChange={() => setIsDisabled(!isDisabled)}
+                />
               </View>
               {/* Add two more options here */}
               <View style={styles.spacer} />
               <Button
                 mode="contained"
-                onPress={() => console.log('Save button pressed')}>
+                onPress={() => disableChatSS()}
+                loading={disableChatMutatin.isLoading}>
                 Save Changes
               </Button>
             </View>
@@ -106,5 +154,13 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     fontSize: 16,
+  },
+  map: {
+    flex: 1,
+  },
+  mapView: {
+    flex: 1,
+    borderRadius: 20,
+    marginBottom: 20,
   },
 });

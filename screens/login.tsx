@@ -7,8 +7,8 @@ import {storeData} from '../utils/store';
 import {StoreEnum} from '../enum/store-enum';
 
 export function LoginScreen({navigation}: any) {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState('dasith2@test');
+  const [password, setPassword] = React.useState('password');
   const signInMutation = useSignInMutation();
 
   const signIn = async () => {
