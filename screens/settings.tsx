@@ -27,13 +27,19 @@ export const SettingsScreen = ({navigation}: any) => {
         ) : (
           <>
             <View style={styles.profileHeader}>
-              <Avatar.Text label={`DG`} size={64} />
-              <Text style={styles.name}>{`Disal Gunathilake`}</Text>
+              <Avatar.Text
+                label={`${user.data.firstName[0]}${user.data.lastName[0]}`}
+                size={64}
+              />
+              <Text
+                style={
+                  styles.name
+                }>{`${user.data.firstName} ${user.data.lastName}`}</Text>
             </View>
             <View style={styles.form}>
               <TextInput
                 label="Email"
-                value={'disal@localhost'}
+                value={`${user.data.email}`}
                 disabled={true}
               />
               <View style={styles.spacer} />
