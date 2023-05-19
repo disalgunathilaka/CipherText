@@ -1,16 +1,15 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {
-  Appbar,
-  Avatar,
-  Button,
-  Caption,
-  List,
-  TextInput,
-} from 'react-native-paper';
+import {Appbar, Avatar, Button, List, TextInput} from 'react-native-paper';
+import {IChat} from '../types/chat';
+import {useMessages} from '../hooks/messages/use-messages';
+import {ChatItem} from '../components/chat-item';
 
-const ChatScreen = ({navigation}: any) => {
+const ChatScreen = ({route, navigation}: any) => {
+  const {_id, name, keyPair} = route.params as IChat;
   const [inputValue, setInputValue] = useState('');
+  const messageList = useMessages(_id);
+
   const [messages, setMessages] = useState([
     {id: 1, content: 'Hey, how are you?', sender: 'user', time: '9:00 AM'},
     {
@@ -56,23 +55,17 @@ const ChatScreen = ({navigation}: any) => {
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Avatar.Text size={40} label="J" />
-        <Appbar.Content title="John" />
+        <Avatar.Text size={40} label={name[0]} />
+        <Appbar.Content title={name} />
       </Appbar.Header>
       <List.Section style={styles.messageList}>
-        {messages.map(message => (
-          <List.Item
-            key={message.id}
-            title={message.content}
-            description={<Caption>{message.time}</Caption>}
-            titleStyle={[
-              styles.message,
-              message.sender === 'user'
-                ? styles.sentMessage
-                : styles.receivedMessage,
-            ]}
-          />
-        ))}
+        {messageList.data && (
+          <>
+            {messageList.data.map(message => (
+              <ChatItem message={message} key={message._id} keyPair={keyPair} />
+            ))}
+          </>
+        )}
       </List.Section>
       <View style={styles.inputContainer}>
         <TextInput

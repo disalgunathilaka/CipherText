@@ -1,11 +1,12 @@
+import {IMessage} from '../../types/messages';
 import {request} from '../../utils/request';
 import {useQuery} from '@tanstack/react-query';
 
-export function useChild(id: string) {
-  return useQuery(['children', id], () =>
+export function useMessages(id: string) {
+  return useQuery<IMessage[]>(['messages', id], () =>
     request(
       {
-        path: `children/${id}`,
+        path: `messages/${id}`,
         method: 'GET',
       },
       null,

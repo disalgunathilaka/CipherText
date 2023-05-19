@@ -3,6 +3,8 @@ import React from 'react';
 import {Button, Text, TextInput} from 'react-native-paper';
 import {useSignInMutation} from '../hooks/auth/use-sign-in';
 import {StyleSheet, ToastAndroid, View} from 'react-native';
+import {storeData} from '../utils/store';
+import {StoreEnum} from '../enum/store-enum';
 
 export function LoginScreen({navigation}: any) {
   const [email, setEmail] = React.useState('');
@@ -11,19 +13,14 @@ export function LoginScreen({navigation}: any) {
 
   const signIn = async () => {
     try {
-      navigation.navigate('Home', {
-        userId: '1234',
-      });
-
       const result = await signInMutation.mutateAsync({email, password});
 
       if (!result) {
         ToastAndroid.show('Unauthozied', ToastAndroid.SHORT);
         return;
       }
-      navigation.navigate('Home', {
-        userId: result.user.id,
-      });
+      await storeData({key: StoreEnum.AUTH_TOKEN, value: result.token});
+      navigation.navigate('Home');
     } catch (err) {
       console.log(err);
     }
