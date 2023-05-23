@@ -94,9 +94,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.nehaappmobile"
+    namespace "com.CipherText"
     defaultConfig {
-        applicationId "com.nehaappmobile"
+        applicationId "com.CipherText"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

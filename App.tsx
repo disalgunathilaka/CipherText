@@ -13,6 +13,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import ChatScreen from './screens/conversation-details';
 import {SettingsScreen} from './screens/settings';
 import {ChatInformationScreen} from './screens/chat-info';
+import {RegisterScreen} from './screens/register';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ function App(): JSX.Element {
               header: () => <></>,
             }}>
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Home" component={ChatList} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />

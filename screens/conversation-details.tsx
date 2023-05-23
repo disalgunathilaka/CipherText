@@ -15,6 +15,9 @@ import {useSendMessage} from '../hooks/messages/send-messages';
 import {encrypt} from '../utils/crypto';
 import Geolocation from '@react-native-community/geolocation';
 import {useGetCurrentUser} from '../hooks/auth/get-current-user';
+import forge from 'node-forge';
+import {ScrollView} from 'react-native-gesture-handler';
+import {NativeModules} from 'react-native';
 
 const ChatScreen = ({route, navigation}: any) => {
   const {_id, name, keyPair, dissabledScreenShots} = route.params as IChat;
@@ -29,8 +32,10 @@ const ChatScreen = ({route, navigation}: any) => {
       async position => {
         const {latitude, longitude} = position.coords;
 
+        const publicKeyObj = forge.pki.publicKeyFromPem(keyPair.publicKey);
+
         // Encrypt the message using the public key
-        const value = encrypt(inputValue, keyPair.publicKey);
+        const value = encrypt(inputValue, publicKeyObj);
 
         // Send the message with the current location
         await sendMessageMutation.mutateAsync({
@@ -53,18 +58,30 @@ const ChatScreen = ({route, navigation}: any) => {
   };
 
   useEffect(() => {
+    const forbidFunction = async () => {
+      try {
+        const result = await NativeModules.PreventScreenshotModule.forbid();
+        console.log('=== result ===');
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const allowFunction = async () => {
+      try {
+        const result = await NativeModules.PreventScreenshotModule.allow();
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
     if (dissabledScreenShots) {
-      console.log('THIS CHAT HAS DISSABLED SCREENSHOTS');
-      //Alert.alert(
-      // 'Warning',
-      //'You have taken a screenshot of the app. This is prohibited due to security reasons.',
-      //[
-      // {
-      //  text: 'I understand',
-      //  onPress: () => console.log('I understand pressed'),
-      //},
-      //],
-      //);
+      console.log('=== screen shots will be forbit ===');
+      forbidFunction();
+    } else {
+      allowFunction();
     }
   }, [dissabledScreenShots]);
 
@@ -93,28 +110,30 @@ const ChatScreen = ({route, navigation}: any) => {
         />
       </Appbar.Header>
 
-      <List.Section style={styles.messageList}>
-        {!user.data ? (
-          <Button loading={true} mode="text">
-            Loading
-          </Button>
-        ) : (
-          <>
-            {messageList.data && (
-              <>
-                {messageList.data.map(message => (
-                  <ChatItem
-                    user={user.data}
-                    message={message}
-                    key={message._id}
-                    keyPair={keyPair}
-                  />
-                ))}
-              </>
-            )}
-          </>
-        )}
-      </List.Section>
+      <ScrollView>
+        <List.Section style={styles.messageList}>
+          {!user.data ? (
+            <Button loading={true} mode="text">
+              Loading
+            </Button>
+          ) : (
+            <>
+              {messageList.data && (
+                <>
+                  {messageList.data.map(message => (
+                    <ChatItem
+                      user={user.data}
+                      message={message}
+                      key={message._id}
+                      keyPair={keyPair}
+                    />
+                  ))}
+                </>
+              )}
+            </>
+          )}
+        </List.Section>
+      </ScrollView>
 
       <View style={styles.inputContainer}>
         <Searchbar

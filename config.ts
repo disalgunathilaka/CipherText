@@ -1,4 +1,4 @@
 export const AppConfig = {
-  name: 'App Name',
-  backend: 'http://192.168.8.123:3333/api',
+  name: 'Cipher Text',
+  backend: 'https://api.cipherconnect.z9fr.xyz/api',
 };

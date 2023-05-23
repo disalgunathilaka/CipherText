@@ -5,6 +5,7 @@ import {StyleSheet} from 'react-native';
 import {KeyPair} from '../types/chat';
 import {decrypt} from '../utils/crypto';
 import {timeSince} from '../utils/days-ago';
+import forge from 'node-forge';
 
 interface IChatItemProps {
   message: IMessage;
@@ -18,10 +19,12 @@ interface IChatItemProps {
 }
 
 export const ChatItem = ({message, keyPair, user}: IChatItemProps) => {
+  const privateKeyObj = forge.pki.privateKeyFromPem(keyPair.privateKey);
+
   return (
     <List.Item
       key={message._id}
-      title={decrypt(message.text, keyPair.privateKey)}
+      title={decrypt(message.text, privateKeyObj)}
       description={<Caption>{timeSince(new Date(message.createdAt))}</Caption>}
       titleStyle={[
         styles.message,

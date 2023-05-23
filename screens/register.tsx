@@ -1,26 +1,31 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {Button, Text, TextInput} from 'react-native-paper';
-import {useSignInMutation} from '../hooks/auth/use-sign-in';
 import {StyleSheet, ToastAndroid, View} from 'react-native';
-import {storeData} from '../utils/store';
-import {StoreEnum} from '../enum/store-enum';
+import {useSignUpMutation} from '../hooks/auth/use-signup';
 
-export function LoginScreen({navigation}: any) {
+export function RegisterScreen({navigation}: any) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const signInMutation = useSignInMutation();
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLasttName] = React.useState('');
 
-  const signIn = async () => {
+  const signUpMutation = useSignUpMutation();
+
+  const signUp = async () => {
     try {
-      const result = await signInMutation.mutateAsync({email, password});
+      const result = await signUpMutation.mutateAsync({
+        email,
+        password,
+        firstName,
+        lastName,
+      });
 
       if (!result) {
-        ToastAndroid.show('Unauthozied', ToastAndroid.SHORT);
+        ToastAndroid.show('Enable to register', ToastAndroid.SHORT);
         return;
       }
-      await storeData({key: StoreEnum.AUTH_TOKEN, value: result.token});
-      navigation.navigate('Home');
+      navigation.navigate('Login');
     } catch (err) {
       console.log(err);
     }
@@ -28,8 +33,28 @@ export function LoginScreen({navigation}: any) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back!</Text>
+      <Text style={styles.title}>Create new account!</Text>
       <View style={styles.form}>
+        <TextInput
+          label="First name"
+          value={firstName}
+          onChangeText={setFirstName}
+          mode="outlined"
+          style={styles.input}
+          autoCapitalize="none"
+          textContentType="name"
+        />
+
+        <TextInput
+          label="Last name"
+          value={lastName}
+          onChangeText={setLasttName}
+          mode="outlined"
+          style={styles.input}
+          autoCapitalize="none"
+          textContentType="name"
+        />
+
         <TextInput
           label="Email"
           value={email}
@@ -52,24 +77,24 @@ export function LoginScreen({navigation}: any) {
         />
         <Button
           mode="contained"
-          onPress={signIn}
+          onPress={signUp}
           style={styles.button}
-          loading={signInMutation.isLoading}>
-          Log In
+          loading={signUpMutation.isLoading}>
+          Sign Up
         </Button>
 
         <Text
           style={{
-            marginTop: 20,
+            marginTop: 10,
           }}>
-          Dont have an account?{' '}
+          Already have an account?{' '}
           <Text
-            onPress={() => navigation.navigate('Register')}
+            onPress={() => navigation.navigate('Login')}
             style={{
               color: '#1890FF',
               fontWeight: 'bold',
             }}>
-            Register
+            Login
           </Text>
         </Text>
       </View>
